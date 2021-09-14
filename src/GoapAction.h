@@ -1,6 +1,20 @@
 #pragma once
+#include <unordered_map>
+
+#include "World.h"
 
 class GoapAction {
-    public:
-	float Cost(std::vector<GoapAction> actions) const;
+public:
+	GoapAction();
+	virtual void GeneratePreConditions() = 0;
+	virtual void GenerateEffects() = 0;
+	virtual bool TryPerformAction(World world) = 0;
+	virtual bool Finished() = 0;
+	virtual bool CanDoAction(GoapAI& ai) const = 0;
+	virtual void Reset() = 0;
+	void AddPreCondition(std::string key, bool value);
+	void AddEffect(std::string key, bool value);
+	std::unordered_map<std::string, bool> preConditions;
+	std::unordered_map<std::string, bool> effects;
+	float cost;
 };
