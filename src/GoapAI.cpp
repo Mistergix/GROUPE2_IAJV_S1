@@ -119,6 +119,8 @@ bool BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::uno
 			}
 		}
 	}
+
+	return foundOneSolution;
 }
 
 GoapAI::GoapAI()
