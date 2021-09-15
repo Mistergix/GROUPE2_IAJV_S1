@@ -2,6 +2,10 @@
 
 #include "EnemyAI.h"
 #include "World.h"
+#include "AttackPlayerAction.h"
+#include "GetWeaponAction.h"
+#include "MoveToPlayerAction.h"
+#include "ReloadAction.h"
 
 int main()
 {
@@ -11,6 +15,20 @@ int main()
 	enemyAI.AddState("HasAmmo", false);
 	enemyAI.AddState("HasWeapon", true);
 	enemyAI.AddState("PlayerInRange", false);
+
+	AttackPlayerAction attackPlayer;
+
+	GetWeaponAction getWeapon;
+
+	ReloadAction reload;
+	reload.reloadTime = 1.0f;
+
+	MoveToPlayerAction moveToPlayer;
+
+	enemyAI.AddAction(attackPlayer);
+	enemyAI.AddAction(getWeapon);
+	enemyAI.AddAction(reload);
+	enemyAI.AddAction(moveToPlayer);
 
 	std::unordered_map<std::string, bool> goalState;
 
