@@ -11,31 +11,15 @@ bool IsIn(std::pair<const std::string, bool> data, std::unordered_map<std::strin
 	return false;
 }
 
-void CreateUnFilledConditions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState, std::unordered_map<std::string, bool>& nodeUnfilledConditions, std::unordered_map<std::string, bool>& unfilledConditions) {
-	for (const auto& keyValue : goalState) {
-		for (const auto& keyValueState : initialState) {
-			if (initialState.contains(keyValue.first)) {
-				if (initialState[keyValue.first] != goalState[keyValue.first]) {
-					unfilledConditions[keyValue.first] = keyValue.second;
-				}
-			}
-			else
-			{
-				unfilledConditions[keyValue.first] = keyValue.second;
-			}
+void CreateUnFilledConditions(std::unordered_map<std::string, bool>& initialState, Node& node, std::unordered_map<std::string, bool>& unfilledConditions) {
+
+	for (const auto& keyValue : node.unfilledConditions) {
+		if (!IsIn(keyValue, node.action.effects)) {
+			unfilledConditions[keyValue.first] = keyValue.second;
 		}
 	}
-
-	for (const auto& keyValue : nodeUnfilledConditions) {
-		bool add = true;
-		for (const auto& keyValueState : initialState) {
-			if (keyValueState == keyValue) {
-				add = false;
-				break;
-			}
-		}
-
-		if (add) {
+	for (const auto& keyValue : node.action->preConditions) {
+		if (!IsIn(keyValue, initialState)) {
 			unfilledConditions[keyValue.first] = keyValue.second;
 		}
 	}
@@ -107,7 +91,7 @@ bool BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::uno
 
 			for (const auto& action : subset) {
 				std::unordered_map<std::string, bool> unfilledConditions;
-				CreateUnFilledConditions(currentState, node.action.preConditions, node.unfilledConditions, unfilledConditions);
+				CreateUnFilledConditions(currentState, node, unfilledConditions);
 				Node n(node, action.cost + node.cost, currentState, unfilledConditions, subset, action);
 				newNodes.push_back(node);
 			}
