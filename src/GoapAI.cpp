@@ -26,7 +26,7 @@ bool GoapAI::HasPlan()
 	return hasPlan;
 }
 
-void GoapAI::PerformAction(World world)
+void GoapAI::PerformAction(World& world)
 {
 	if (currentActions.empty()) {
 		hasPlan = false;
@@ -60,14 +60,16 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	std::unordered_set<GoapAction> doableActions;
 
 	for (const auto& action : possibleActions) {
-		if (action.CanDoAction(this)) {
+		if (action.CanDoAction(*this)) {
 			doableActions.insert(action);
 		}
 	}
 
 	std::vector<Node> leaves;
 
-	Node start(NULL, 0.0f, initialState, NULL);
+	Node* nullParent;
+	GoapAction* nullAction;
+	Node start(nullParent, 0.0f, initialState, *nullAction);
 	bool success = BuildTree(start, leaves, doableActions, goalState);
 
 	if (!success) {
@@ -90,10 +92,11 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	while (n != NULL) {
 		if (n.action != NULL) {
 			auto itPos = actions.begin();
-			actions.insert(itPos, n.action);
+			GoapAction* action = n.action;
+			actions.insert(itPos, *action);
 		}
 
-		n = n.parent;
+		n = *n.parent;
 	}
 
 	for (const auto& action : actions) {
@@ -111,7 +114,7 @@ bool GoapAI::BuildTree(Node& parent, std::vector<Node>& leaves, std::unordered_s
 	for (const auto& action : doableActions) {
 		if (StateContainsTest(action.preConditions, parent.state)) {
 			std::unordered_map<std::string, bool> currentState = UpdateState(parent.state, action.effects);
-			Node node(parent, parent.cost + action.cost, currentState, action);
+			Node node(&parent, parent.cost + action.cost, currentState, action);
 			if (StateContainsTest(goalState, currentState)) {
 				leaves.push_back(node);
 				foundOneSolution = true;
@@ -130,7 +133,7 @@ bool GoapAI::BuildTree(Node& parent, std::vector<Node>& leaves, std::unordered_s
 	return foundOneSolution;
 }
 
-bool GoapAI::StateContainsTest(std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state)
+bool GoapAI::StateContainsTest(const std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state) const
 {
 	for (const auto& keyValue : test) {
 		bool match = false;
@@ -163,7 +166,7 @@ std::unordered_map<std::string, bool> GoapAI::UpdateState(std::unordered_map<std
 	return state;
 }
 
-std::unordered_set<GoapAction> GoapAI::GetSubset(std::unordered_set<GoapAction> actions, GoapAction& removeThisAction)
+std::unordered_set<GoapAction> GoapAI::GetSubset(std::unordered_set<GoapAction> actions, const GoapAction& removeThisAction) const
 {
 	std::unordered_set<GoapAction> subset;
 	for (const auto& action : actions) {
@@ -174,3 +177,4 @@ std::unordered_set<GoapAction> GoapAI::GetSubset(std::unordered_set<GoapAction> 
 
 	return subset;
 }
+

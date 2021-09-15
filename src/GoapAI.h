@@ -24,7 +24,7 @@ private :
 
 	void PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState);
 	bool BuildTree(Node& parent, std::vector<Node>& leaves, std::unordered_set<GoapAction> doableActions, std::unordered_map<std::string, bool>& goalState);
-	bool StateContainsTest(std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state);
+	bool StateContainsTest(const std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state) const;
 	std::unordered_map<std::string, bool> UpdateState(std::unordered_map<std::string, bool> currentState, std::unordered_map<std::string, bool> effects);
-	std::unordered_set<GoapAction> GetSubset(std::unordered_set<GoapAction> actions, GoapAction& removeThisAction);
+	std::unordered_set<GoapAction> GetSubset(std::unordered_set<GoapAction> actions, const GoapAction& removeThisAction) const;
 };

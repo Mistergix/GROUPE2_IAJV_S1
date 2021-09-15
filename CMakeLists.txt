@@ -4,7 +4,7 @@ cmake_policy(SET CMP0091 NEW)
 
 project(xXBestIaEverXx)
 
-add_executable(xXBestIaEverXx src/main.cpp     "src/GoapAction.h" "src/GoapAction.cpp" "src/GoapAI.h" "src/GoapAI.cpp" "src/EnemyAI.h" "src/Node.h" "src/World.h" "src/AttackPlayerAction.h")
+add_executable(xXBestIaEverXx src/main.cpp     "src/GoapAction.h" "src/GoapAction.cpp" "src/GoapAI.h" "src/GoapAI.cpp" "src/EnemyAI.h" "src/Node.h" "src/World.h" "src/AttackPlayerAction.h" "src/Node.cpp")
 
 set_property(TARGET xXBestIaEverXx PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
