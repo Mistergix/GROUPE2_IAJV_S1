@@ -26,7 +26,7 @@ bool ReloadAction::Finished()
 	return currentReloadTime >= reloadTime;
 }
 
-bool ReloadAction::CanDoAction(GoapAI& ai) const
+bool ReloadAction::CanDoActionInContext(GoapAI& ai) const
 {
 	return true;
 }
