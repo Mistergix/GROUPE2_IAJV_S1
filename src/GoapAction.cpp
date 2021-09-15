@@ -1,4 +1,5 @@
 #include "GoapAction.h"
+#include "GoapAI.h"
 
 GoapAction::GoapAction(float cost) : cost(cost)
 {
