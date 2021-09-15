@@ -9,21 +9,30 @@
 
 int main()
 {
-	EnemyAI enemyAI;
 	World world(3);
+
+	EnemyAI enemyAI1;
+
+	enemyAI1.AddState("HasAmmo", true);
+	enemyAI1.AddState("HasWeapon", true);
+	enemyAI1.AddState("PlayerInRange", true);
+
+
+	EnemyAI enemyAI;
+	
 
 	enemyAI.AddState("HasAmmo", false);
 	enemyAI.AddState("HasWeapon", true);
 	enemyAI.AddState("PlayerInRange", false);
 
-	AttackPlayerAction attackPlayer;
+	AttackPlayerAction attackPlayer(1.0f);
 
-	GetWeaponAction getWeapon;
+	GetWeaponAction getWeapon(3.0f);
 
-	ReloadAction reload;
+	ReloadAction reload(1.0f);
 	reload.reloadTime = 1.0f;
 
-	MoveToPlayerAction moveToPlayer;
+	MoveToPlayerAction moveToPlayer(3.0f);
 
 	enemyAI.AddAction(attackPlayer);
 	enemyAI.AddAction(getWeapon);

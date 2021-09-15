@@ -1,5 +1,10 @@
 #include "ReloadAction.h"
 
+ReloadAction::ReloadAction(float cost) : GoapAction(cost)
+{
+	
+}
+
 void ReloadAction::GeneratePreConditions()
 {
 	AddPreCondition("HasWeapon", true);
@@ -18,12 +23,12 @@ bool ReloadAction::TryPerformAction(World world)
 
 bool ReloadAction::Finished()
 {
-	return false;
+	return currentReloadTime >= reloadTime;
 }
 
 bool ReloadAction::CanDoAction(GoapAI& ai) const
 {
-	return false;
+	return true;
 }
 
 void ReloadAction::Reset()

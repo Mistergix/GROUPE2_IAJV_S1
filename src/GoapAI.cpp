@@ -1,6 +1,149 @@
 #include "GoapAI.h"
 #include <iostream>>
 
+bool IsIn(std::pair<const std::string, bool> data, std::unordered_map<std::string, bool>& map) {
+	for (const auto& keyValue : map) {
+		if (keyValue == data) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void CreateUnFilledConditions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState, std::unordered_map<std::string, bool>& nodeUnfilledConditions, std::unordered_map<std::string, bool>& unfilledConditions) {
+	for (const auto& keyValue : goalState) {
+		for (const auto& keyValueState : initialState) {
+			if (initialState.contains(keyValue.first)) {
+				if (initialState[keyValue.first] != goalState[keyValue.first]) {
+					unfilledConditions[keyValue.first] = keyValue.second;
+				}
+			}
+			else
+			{
+				unfilledConditions[keyValue.first] = keyValue.second;
+			}
+		}
+	}
+
+	for (const auto& keyValue : nodeUnfilledConditions) {
+		bool add = true;
+		for (const auto& keyValueState : initialState) {
+			if (keyValueState == keyValue) {
+				add = false;
+				break;
+			}
+		}
+
+		if (add) {
+			unfilledConditions[keyValue.first] = keyValue.second;
+		}
+	}
+}
+
+bool IsValid(Node& node) {
+	for (const auto& preCondition : node.action.preConditions) {
+		if (!IsIn(preCondition, node.state)) {
+			return false;
+		}
+	}
+
+	for (const auto& preCondition : node.unfilledConditions) {
+		if (!IsIn(preCondition, node.action.effects)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+std::unordered_map<std::string, bool> UpdateState(std::unordered_map<std::string, bool> currentState, std::unordered_map<std::string, bool> effects)
+{
+	std::unordered_map<std::string, bool> state;
+	// Copy Current State
+	for (const auto& s : currentState) {
+		state[s.first] = s.second;
+	}
+
+	// Apply Effects
+	for (const auto& effect : effects) {
+		state[effect.first] = effect.second;
+	}
+
+
+	return state;
+}
+
+int UnfilledConditionsCount(Node& node, std::unordered_map<std::string, bool>& unfilledConditions) {
+
+}
+
+std::unordered_set<GoapAction> GetSubset(std::unordered_set<GoapAction> actions, GoapAction& removeThisAction)
+{
+	std::unordered_set<GoapAction> subset;
+	for (const auto& action : actions) {
+		if (action != removeThisAction) {
+			subset.insert(action);
+		}
+	}
+
+	return subset;
+}
+
+bool BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::unordered_set<GoapAction> doableActions) {
+	
+	bool foundOneSolution = false;
+
+	for (const auto& node : openNodes) {
+		if (IsValid(node)) {
+			leaves.push_back(node);
+			foundOneSolution = true;
+		}
+		else
+		{
+			std::vector<Node> newNodes;
+			std::unordered_map<std::string, bool> currentState = UpdateState(node.state, node.action.effects);
+			std::unordered_set<GoapAction> subset = GetSubset(doableActions, node.action);
+
+			std::vector<GoapAction> removeActions;
+
+			std::unordered_map<std::string, bool> uConditions;
+			CreateUnFilledConditions(currentState, node.action.preConditions, node.unfilledConditions, uConditions);
+
+			for (const auto& action : subset) {
+				
+				bool remove = true;
+				for (const auto& effect : action.effects) {
+					if (IsIn(effect, uConditions)) {
+						remove = false;
+					}
+				}
+
+				if (remove) {
+					removeActions.push_back(action);
+				}
+			}
+
+			for (const auto& action : removeActions) {
+				subset.remove(action);
+			}
+
+			for (const auto& action : subset) {
+				std::unordered_map<std::string, bool> unfilledConditions;
+				CreateUnFilledConditions(currentState, node.action.preConditions, node.unfilledConditions, unfilledConditions);
+				Node n(node, action.cost + node.cost, currentState, unfilledConditions, subset, action);
+				newNodes.push_back(node);
+			}
+
+
+			bool found = BuildTree(newNodes, leaves, subset);
+			if (found) {
+				foundOneSolution = found;
+			}
+		}
+	}
+}
+
 GoapAI::GoapAI()
 {
 	LoadActions();
@@ -62,15 +205,27 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	std::unordered_set<GoapAction> doableActions;
 
 	for (const auto& action : possibleActions) {
-		if (action.CanDoAction(this)) {
+		if (action.CanDoActionInContext(this)) {
 			doableActions.insert(action);
 		}
 	}
 
+	std::vector<Node> openNodes;
 	std::vector<Node> leaves;
+	
 
-	Node start(NULL, 0.0f, initialState, NULL);
-	bool success = BuildTree(start, leaves, doableActions, goalState);
+	for (const auto& action : doableActions) {
+		std::unordered_map<std::string, bool> unfilledConditions;
+		CreateUnFilledConditions(initialState, goalState, unfilledConditions);
+		for (const auto& effect : action.effects) {
+			if (IsIn(effect, unfilledConditions)) {
+				Node node(NULL, action.cost, initialState, unfilledConditions, doableActions, action);
+				openNodes.push_back(node);
+			}
+		}
+	}
+
+	bool success = BuildTree(openNodes, leaves);
 
 	if (!success) {
 		std::cout << "Failed To Create Plan" << std::endl;
@@ -91,15 +246,10 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	Node n = bestNode;
 	while (n != NULL) {
 		if (n.action != NULL) {
-			auto itPos = actions.begin();
-			actions.insert(itPos, n.action);
+			currentActions.push(n.action);
 		}
 
 		n = n.parent;
-	}
-
-	for (const auto& action : actions) {
-		currentActions.push(action);
 	}
 
 	std::cout << "We have a plan !!" << std::endl;

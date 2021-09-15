@@ -6,12 +6,12 @@
 
 class GoapAction {
 public:
-	GoapAction();
+	GoapAction(float cost);
 	virtual void GeneratePreConditions() = 0;
 	virtual void GenerateEffects() = 0;
 	virtual bool TryPerformAction(World world) = 0;
 	virtual bool Finished() = 0;
-	virtual bool CanDoAction(GoapAI& ai) const = 0;
+	virtual bool CanDoActionInContext(GoapAI& ai) const = 0;
 	virtual void Reset() = 0;
 	void AddPreCondition(std::string key, bool value);
 	void AddEffect(std::string key, bool value);

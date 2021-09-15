@@ -1,6 +1,6 @@
 #include "GoapAction.h"
 
-GoapAction::GoapAction()
+GoapAction::GoapAction(float cost) : cost(cost)
 {
 	GeneratePreConditions();
 	GenerateEffects();
