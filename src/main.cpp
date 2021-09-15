@@ -17,8 +17,12 @@ int main()
 	enemyAI.AddState("PlayerInRange", false);
 
 	AttackPlayerAction attackPlayer;
+
 	GetWeaponAction getWeapon;
+
 	ReloadAction reload;
+	reload.reloadTime = 1.0f;
+
 	MoveToPlayerAction moveToPlayer;
 
 	enemyAI.AddAction(attackPlayer);

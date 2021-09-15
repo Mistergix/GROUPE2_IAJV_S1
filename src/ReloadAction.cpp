@@ -12,7 +12,8 @@ void ReloadAction::GenerateEffects()
 
 bool ReloadAction::TryPerformAction(World world)
 {
-	return false;
+	currentReloadTime += 1.0f / 60.0f;
+	return true;
 }
 
 bool ReloadAction::Finished()
@@ -27,4 +28,5 @@ bool ReloadAction::CanDoAction(GoapAI& ai) const
 
 void ReloadAction::Reset()
 {
+	currentReloadTime = 0.0f;
 }

@@ -14,11 +14,12 @@ void GoapAI::AddAction(GoapAction& action)
 void GoapAI::AddState(std::string key, bool value)
 {
 	initialState[key] = value;
+	currentState[key] = value;
 }
 
 void GoapAI::PlanSequenceOfAction(std::unordered_map<std::string, bool>& goalState)
 {
-	PlanSequenceOfActions(initialState, goalState);
+	PlanSequenceOfActions(currentState, goalState);
 }
 
 bool GoapAI::HasPlan()
@@ -26,7 +27,7 @@ bool GoapAI::HasPlan()
 	return hasPlan;
 }
 
-void GoapAI::PerformAction(World world)
+void GoapAI::PerformAction(World& world)
 {
 	if (currentActions.empty()) {
 		hasPlan = false;
@@ -35,6 +36,7 @@ void GoapAI::PerformAction(World world)
 
 	GoapAction& action = currentActions.front();
 	if (action.Finished()) {
+		UpdateEffects(action);
 		currentActions.pop();
 	}
 
@@ -144,6 +146,11 @@ bool GoapAI::StateContainsTest(std::unordered_map<std::string, bool>& test, std:
 	}
 
 	return true;
+}
+
+void GoapAI::UpdateEffects(GoapAction& action)
+{
+	currentState = UpdateState(currentState, action.effects);
 }
 
 std::unordered_map<std::string, bool> GoapAI::UpdateState(std::unordered_map<std::string, bool> currentState, std::unordered_map<std::string, bool> effects)
