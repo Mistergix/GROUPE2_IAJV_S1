@@ -2,6 +2,7 @@
 #include <unordered_map>
 
 #include "World.h"
+#include "GoapAI.h"
 
 class GoapAction {
 public:
