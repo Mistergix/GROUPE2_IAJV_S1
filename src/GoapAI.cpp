@@ -41,7 +41,7 @@ void CreateUnFilledConditions(std::unordered_map<std::string, bool>& initialStat
 	}
 }
 
-bool IsValid(Node& node) {
+bool GoapAI::IsValid(const Node& node) const {
 	for (const auto& preCondition : node.action.preConditions) {
 		if (!IsIn(preCondition, node.state)) {
 			return false;
@@ -90,7 +90,7 @@ std::unordered_set<GoapAction> GetSubset(std::unordered_set<GoapAction> actions,
 	return subset;
 }
 
-bool BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::unordered_set<GoapAction> doableActions) {
+bool GoapAI::BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::unordered_set<GoapAction> doableActions) {
 	
 	bool foundOneSolution = false;
 
@@ -125,7 +125,7 @@ bool BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::uno
 			}
 
 			for (const auto& action : removeActions) {
-				subset.remove(action);
+				subset.erase(action);
 			}
 
 			for (const auto& action : subset) {
@@ -198,14 +198,14 @@ void GoapAI::PerformAction(World& world)
 
 void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState)
 {
-	for (const auto& action : possibleActions) {
+	for (auto action : possibleActions) {
 		action.Reset();
 	}
 
 	std::unordered_set<GoapAction> doableActions;
 
 	for (const auto& action : possibleActions) {
-		if (action.CanDoActionInContext(this)) {
+		if (action.CanDoActionInContext(*this)) {
 			doableActions.insert(action);
 		}
 	}
@@ -213,19 +213,19 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	std::vector<Node> openNodes;
 	std::vector<Node> leaves;
 	
-
+	Node* nullParent;
 	for (const auto& action : doableActions) {
 		std::unordered_map<std::string, bool> unfilledConditions;
 		CreateUnFilledConditions(initialState, goalState, unfilledConditions);
 		for (const auto& effect : action.effects) {
 			if (IsIn(effect, unfilledConditions)) {
-				Node node(NULL, action.cost, initialState, unfilledConditions, doableActions, action);
+				Node node(nullParent, action.cost, initialState, unfilledConditions, doableActions, action);
 				openNodes.push_back(node);
 			}
 		}
 	}
 
-	bool success = BuildTree(openNodes, leaves);
+	bool success = BuildTree(openNodes, leaves, doableActions);
 
 	if (!success) {
 		std::cout << "Failed To Create Plan" << std::endl;
@@ -246,7 +246,7 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	Node n = bestNode;
 	while (n != NULL) {
 		if (n.action != NULL) {
-			currentActions.push(n.action);
+			currentActions.push(*n.action);
 		}
 
 		n = n.parent;
@@ -282,7 +282,7 @@ bool GoapAI::BuildTree(Node& parent, std::vector<Node>& leaves, std::unordered_s
 	return foundOneSolution;
 }
 
-bool GoapAI::StateContainsTest(std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state)
+bool GoapAI::StateContainsTest(const std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state) const
 {
 	for (const auto& keyValue : test) {
 		bool match = false;
@@ -303,7 +303,7 @@ void GoapAI::UpdateEffects(GoapAction& action)
 	currentState = UpdateState(currentState, action.effects);
 }
 
-std::unordered_map<std::string, bool> GoapAI::UpdateState(std::unordered_map<std::string, bool> currentState, std::unordered_map<std::string, bool> effects)
+std::unordered_map<std::string, bool> GoapAI::UpdateState(std::unordered_map<std::string, bool> currentState, const std::unordered_map<std::string, bool> effects)
 {
 	std::unordered_map<std::string, bool> state;
 	// Copy Current State
@@ -320,7 +320,7 @@ std::unordered_map<std::string, bool> GoapAI::UpdateState(std::unordered_map<std
 	return state;
 }
 
-std::unordered_set<GoapAction> GoapAI::GetSubset(std::unordered_set<GoapAction> actions, GoapAction& removeThisAction)
+std::unordered_set<GoapAction> GoapAI::GetSubset(std::unordered_set<GoapAction> actions, const GoapAction& removeThisAction) const
 {
 	std::unordered_set<GoapAction> subset;
 	for (const auto& action : actions) {
