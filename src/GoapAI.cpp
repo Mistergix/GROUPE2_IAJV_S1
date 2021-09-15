@@ -179,6 +179,11 @@ GoapAction* GoapAI::GetDefaultAction() {
 	return defaultAction;
 }
 
+void GoapAI::SetDefaultAction(GoapAction* defaultAction)
+{
+	this->defaultAction = defaultAction;
+}
+
 void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState)
 {
 	for (const auto& action : possibleActions) {

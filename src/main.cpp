@@ -41,7 +41,8 @@ int main()
 	enemyAI.AddAction(getWeapon);
 	enemyAI.AddAction(reload);
 	enemyAI.AddAction(moveToPlayer);
-	enemyAI.AddAction(idle);
+
+	enemyAI.SetDefaultAction(&idle);
 
 	std::unordered_map<std::string, bool> goalState;
 

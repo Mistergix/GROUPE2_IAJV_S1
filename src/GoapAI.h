@@ -16,6 +16,7 @@ public:
 	bool HasPlan();
 	void PerformAction(World& world);
 	GoapAction* GetDefaultAction();
+	void SetDefaultAction(GoapAction* defaultAction);
 private :
 	std::unordered_set<GoapAction> possibleActions;
 	std::queue<GoapAction> currentActions;
