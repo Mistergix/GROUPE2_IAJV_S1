@@ -6,6 +6,7 @@
 #include "GetWeaponAction.h"
 #include "MoveToPlayerAction.h"
 #include "ReloadAction.h"
+#include "IdleAction.h"
 
 int main()
 {
@@ -25,6 +26,8 @@ int main()
 	enemyAI.AddState("HasWeapon", true);
 	enemyAI.AddState("PlayerInRange", false);
 
+	IdleAction idle(1.0f);
+
 	AttackPlayerAction attackPlayer(1.0f);
 
 	GetWeaponAction getWeapon(3.0f);
@@ -38,6 +41,7 @@ int main()
 	enemyAI.AddAction(getWeapon);
 	enemyAI.AddAction(reload);
 	enemyAI.AddAction(moveToPlayer);
+	enemyAI.AddAction(idle);
 
 	std::unordered_map<std::string, bool> goalState;
 
