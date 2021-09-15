@@ -15,12 +15,14 @@ public:
 	void PlanSequenceOfAction(std::unordered_map<std::string, bool>& goalState);
 	bool HasPlan();
 	void PerformAction(World& world);
+	GoapAction* GetDefaultAction();
 private :
 	std::unordered_set<GoapAction> possibleActions;
 	std::queue<GoapAction> currentActions;
 	std::unordered_map<std::string, bool> initialState;
 	std::unordered_map<std::string, bool> currentState;
 	bool hasPlan;
+	GoapAction* defaultAction;
 
 	void PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState);
 	bool StateContainsTest(std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state);

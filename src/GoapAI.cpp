@@ -175,6 +175,10 @@ void GoapAI::PerformAction(World& world)
 	}
 }
 
+GoapAction* GoapAI::GetDefaultAction() {
+	return defaultAction;
+}
+
 void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState)
 {
 	for (const auto& action : possibleActions) {
@@ -207,9 +211,11 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	bool success = BuildTree(openNodes, leaves, doableActions);
 
 	if (!success) {
-		std::cout << "Failed To Create Plan" << std::endl;
-		hasPlan = false;
-		return;
+		leaves.clear();
+		GoapAction* action = GetDefaultAction();
+		std::unordered_map<std::string, bool> unfilledConditions;
+		Node node(NULL, action->cost, initialState, unfilledConditions, doableActions, action);
+		leaves.push_back(node);
 	}
 
 	Node bestNode;
