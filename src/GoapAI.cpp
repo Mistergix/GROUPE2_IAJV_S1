@@ -1,5 +1,6 @@
 #include "GoapAI.h"
 #include <iostream>>
+#include <limits>
 
 bool IsIn(std::pair<const std::string, bool> data, std::unordered_map<std::string, bool>& map) {
 	for (const auto& keyValue : map) {
@@ -25,7 +26,7 @@ void CreateUnFilledConditions(std::unordered_map<std::string, bool>& initialStat
 	}
 }
 
-bool IsValid(Node& node) {
+bool GoapAI::IsValid(const Node& node) const{
 	for (const auto& preCondition : node.action.preConditions) {
 		if (!IsIn(preCondition, node.state)) {
 			return false;
@@ -74,13 +75,20 @@ std::unordered_set<GoapAction> GetSubset(std::unordered_set<GoapAction> actions,
 	return subset;
 }
 
-bool BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::unordered_set<GoapAction> doableActions) {
+bool GoapAI::BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::unordered_set<GoapAction> doableActions) {
 	
 	bool foundOneSolution = false;
+
+	float currentBestCost = std::numeric_limits<float>::max();
+
+	if (!leaves.empty()) {
+		currentBestCost = BestNode(leaves)->cost;
+	}
 
 	for (const auto& node : openNodes) {
 		if (IsValid(node)) {
 			leaves.push_back(node);
+			currentBestCost = BestNode(leaves)->cost;
 			foundOneSolution = true;
 		}
 		else
@@ -90,9 +98,15 @@ bool BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::uno
 			std::unordered_set<GoapAction> subset = GetSubset(doableActions, node.action);
 
 			for (const auto& action : subset) {
+				float cost = action.cost + node.cost;
+				if (cost > currentBestCost) {
+					// Skip because we already have a less expensive path
+					continue;
+				}
+
 				std::unordered_map<std::string, bool> unfilledConditions;
 				CreateUnFilledConditions(currentState, node, unfilledConditions);
-				Node n(node, action.cost + node.cost, currentState, unfilledConditions, subset, action);
+				Node n(node, cost, currentState, unfilledConditions, subset, action);
 				newNodes.push_back(node);
 			}
 
@@ -168,6 +182,18 @@ void GoapAI::SetDefaultAction(GoapAction* defaultAction)
 	this->defaultAction = defaultAction;
 }
 
+Node* GoapAI::BestNode(std::vector<Node> leaves)
+{
+	Node bestNode;
+	for (const auto& node : leaves) {
+		if (bestNode == NULL || node.cost < bestNode.cost) {
+			bestNode = node;
+		}
+	}
+
+	return &bestNode;
+}
+
 void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState)
 {
 	for (const auto& action : possibleActions) {
@@ -207,17 +233,12 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 		leaves.push_back(node);
 	}
 
-	Node bestNode;
-	for (const auto& node : leaves) {
-		if (bestNode == NULL || node.cost < bestNode.cost) {
-			bestNode = node;
-		}
-	}
+	Node* bestNode = BestNode(leaves);
 
 	currentActions = {}; // clear actions queue
 
 	std::vector<GoapAction> actions;
-	Node n = bestNode;
+	Node* n = bestNode;
 	while (n != NULL) {
 		if (n.action != NULL) {
 			currentActions.push(n.action);
@@ -249,34 +270,5 @@ bool GoapAI::StateContainsTest(const std::unordered_map<std::string, bool>& test
 void GoapAI::UpdateEffects(GoapAction& action)
 {
 	currentState = UpdateState(currentState, action.effects);
-}
-
-std::unordered_map<std::string, bool> GoapAI::UpdateState(std::unordered_map<std::string, bool> currentState, std::unordered_map<std::string, bool> effects)
-{
-	std::unordered_map<std::string, bool> state;
-	// Copy Current State
-	for (const auto& s : currentState) {
-		state[s.first] = s.second;
-	}
-
-	// Apply Effects
-	for (const auto& effect : effects) {
-		state[effect.first] = effect.second;
-	}
-
-
-	return state;
-}
-
-std::unordered_set<GoapAction> GoapAI::GetSubset(std::unordered_set<GoapAction> actions, const GoapAction& removeThisAction) const
-{
-	std::unordered_set<GoapAction> subset;
-	for (const auto& action : actions) {
-		if (action != removeThisAction) {
-			subset.insert(action);
-		}
-	}
-
-	return subset;
 }
 

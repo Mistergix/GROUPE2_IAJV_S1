@@ -17,6 +17,7 @@ public:
 	void PerformAction(World& world);
 	GoapAction* GetDefaultAction();
 	void SetDefaultAction(GoapAction* defaultAction);
+	Node* BestNode(std::vector<Node> leaves);
 private :
 	std::unordered_set<GoapAction> possibleActions;
 	std::queue<GoapAction> currentActions;
