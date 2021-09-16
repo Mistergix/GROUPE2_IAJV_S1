@@ -9,6 +9,7 @@ public:
 	void PlayerTakeDamage();
 	int WeaponsLeftCount();
 	bool TakeWeapon();
+	void update();
 
 private:
 	int weaponsCount;

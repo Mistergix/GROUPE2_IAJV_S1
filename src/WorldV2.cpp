@@ -27,3 +27,7 @@ bool WorldV2::TakeWeapon()
 
 	return false;
 }
+
+void WorldV2::update()
+{
+}
