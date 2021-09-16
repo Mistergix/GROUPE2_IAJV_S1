@@ -8,7 +8,7 @@
 #include "Goap V1/ReloadAction.h"
 #include "Goap V1/IdleAction.h"
 
-#include "Goap V2/GoapAgent.h"
+#include "GoapAgent.h"
 
 int main()
 {
