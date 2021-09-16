@@ -1,15 +1,20 @@
 #include <iostream>
 
-#include "EnemyAI.h"
-#include "World.h"
-#include "AttackPlayerAction.h"
-#include "GetWeaponAction.h"
-#include "MoveToPlayerAction.h"
-#include "ReloadAction.h"
-#include "IdleAction.h"
+#include "Goap V1/EnemyAI.h"
+#include "Goap V1/World.h"
+#include "Goap V1/AttackPlayerAction.h"
+#include "Goap V1/GetWeaponAction.h"
+#include "Goap V1/MoveToPlayerAction.h"
+#include "Goap V1/ReloadAction.h"
+#include "Goap V1/IdleAction.h"
+
+#include "Goap V2/GoapAgent.h"
 
 int main()
 {
+	GoapAgent agent;
+	agent.makePlan();
+
 	World world(3);
 
 	EnemyAI enemyAI("Enemy 1");
