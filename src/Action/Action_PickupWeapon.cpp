@@ -1,14 +1,15 @@
 #include "Action_PickupWeapon.h"
 #include <iostream>
 
-Action_PickupWeapon::Action_PickupWeapon():
-	GoapAction(3, "PickupWeapon")
+Action_PickupWeapon::Action_PickupWeapon(float time) :
+	GoapAction(2, "PickupWeapon"),
+	timeToGetWeapon(time)
 {
-	addEffect("is_in_range", false);
+	addEffect("is_in_range_distance", false);
+	addEffect("is_in_range_melee", false);
 	addEffect("has_weapon", true);
 	addEffect("has_ammo", true);
 
-	timeToGetWeapon = 1.5f;
 	reset();
 }
 
@@ -30,7 +31,7 @@ bool Action_PickupWeapon::finished() const
 
 bool Action_PickupWeapon::canDoActionInContext(WorldV2& world, GoapAgent& ai) const
 {
-	return true;
+	return world.WeaponsLeftCount() >= 1;
 }
 
 void Action_PickupWeapon::reset()

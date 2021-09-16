@@ -2,9 +2,9 @@
 #include <iostream>
 
 Action_MoveToPlayer::Action_MoveToPlayer():
-	GoapAction(5, "MoveToPlayer")
+	GoapAction(3, "MoveToPlayer")
 {
-	addEffect("is_in_range", true);
+	addEffect("is_in_range_distance", true);
 	timeToMove = 2.5f;
 	reset();
 }

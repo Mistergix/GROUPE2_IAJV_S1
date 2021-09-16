@@ -2,11 +2,11 @@
 #include <iostream>
 
 Action_AttackPlayer::Action_AttackPlayer():
-	GoapAction(1, "AttackPlayer")
+	GoapAction(2, "AttackPlayerDistance")
 {
 	addPrecondition("has_weapon", true);
 	addPrecondition("has_ammo", true);
-	addPrecondition("is_in_range", true);
+	addPrecondition("is_in_range_distance", true);
 
 	reset();
 }

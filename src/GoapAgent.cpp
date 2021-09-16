@@ -29,6 +29,7 @@ void GoapAgent::addAction(std::unique_ptr<GoapAction>&& action) {
 
 void GoapAgent::makePlan()
 {
+	std::cout << std::endl << std::endl;
 	std::cout << _name << " IS PLANNING ..." << std::endl;
 	std::vector<GoapAction*> actions;
 	
