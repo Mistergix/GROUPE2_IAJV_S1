@@ -13,6 +13,11 @@ public:
 	
 	const std::string& getName() const;
 
+	virtual bool tryPerformAction(World& world, GoapAgent& ai) const = 0;
+	virtual bool finished() const = 0;
+	virtual bool canDoActionInContext(World& world, GoapAgent& ai) const = 0;
+	virtual void reset() = 0;
+
 protected:
 	void addPrecondition(const std::string& key, bool value);
 	void addEffect(const std::string& key, bool value);
