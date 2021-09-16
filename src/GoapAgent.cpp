@@ -36,6 +36,8 @@ void GoapAgent::makePlan()
 		return action.get();
 	});
 
+	_goal->reset();
+
 	for (auto& action : actions) {
 		action->reset();
 	}
