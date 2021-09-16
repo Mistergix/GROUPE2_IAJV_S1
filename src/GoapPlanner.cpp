@@ -2,8 +2,9 @@
 #include "GoapNode.h"
 #include <algorithm>
 #include <iterator>
+#include <iostream>
 
-std::deque<const GoapAction*> GoapPlanner::run(const std::unordered_map<std::string, bool>& agentState, const GoapAction& goal, const std::vector<const GoapAction*>& actions)
+std::deque<const GoapAction*> GoapPlanner::run(const std::unordered_map<std::string, bool>& agentState, const GoapAction& goal, const std::vector<const GoapAction*>& actions, const GoapAction& defaultAction)
 {
 	GoapNode rootNode;
 	rootNode.remainingPreconditions = goal.getPreconditions();
@@ -109,7 +110,10 @@ std::deque<const GoapAction*> GoapPlanner::run(const std::unordered_map<std::str
 	}
 	else
 	{
-		return {};
+		std::cout << "NO PATH FOUND, DEFAULT PATH" << std::endl;
+		return {
+			&defaultAction
+		};
 	}
 }
 

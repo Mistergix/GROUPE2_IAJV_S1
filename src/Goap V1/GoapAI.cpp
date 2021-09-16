@@ -135,10 +135,10 @@ void GoapAI::AddState(std::string key, bool value)
 
 void GoapAI::PlanSequenceOfAction(std::unordered_map<std::string, bool>& goalState, World& world)
 {
-	std::cout << name << " IS PLANNING ..." << std::endl;
+	
 	PlanSequenceOfActions(_currentState, goalState, world);
 	
-	std::cout << "---------------------------------------------------" << std::endl << std::endl;
+	
 }
 
 bool GoapAI::HasPlan()
