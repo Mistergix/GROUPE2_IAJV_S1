@@ -3,5 +3,5 @@
 #include "GoapAI.h"
 
 class EnemyAI : public GoapAI {
-	virtual void LoadActions();
+	void LoadActions() override;
 };

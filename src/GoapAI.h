@@ -19,18 +19,18 @@ public:
 	void SetDefaultAction(GoapAction* defaultAction);
 	Node* BestNode(std::vector<Node> leaves);
 private :
-	std::unordered_set<GoapAction> possibleActions;
-	std::queue<GoapAction> currentActions;
-	std::unordered_map<std::string, bool> initialState;
-	std::unordered_map<std::string, bool> currentState;
-	bool hasPlan;
+	std::vector<GoapAction> _possibleActions;
+	std::queue<GoapAction*> _currentActions;
+	std::unordered_map<std::string, bool> _currentState;;
+	bool _hasPlan;
 	GoapAction* defaultAction;
 
 	void PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState);
-	bool StateContainsTest(std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state);
+	static bool StateContainsTest(std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state);
 	void UpdateEffects(GoapAction& action);
-	std::unordered_map<std::string, bool> UpdateState(std::unordered_map<std::string, bool> currentState, const std::unordered_map<std::string, bool> effects);
-	std::unordered_set<GoapAction> GetSubset(std::unordered_set<GoapAction> actions, const GoapAction& removeThisAction) const;
+	static std::unordered_map<std::string, bool> UpdateState(std::unordered_map<std::string, bool> state, std::unordered_map<std::string, bool>& effects);
 	bool IsValid(const Node& node) const;
-	bool BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::unordered_set<GoapAction> doableActions);
+	static std::vector<GoapAction*> GetSubset(std::vector<GoapAction*> actions, GoapAction* removeThisAction);
+	bool BuildTree(std::vector<Node>& openNodes, std::vector<Node*>& leaves, std::vector<GoapAction*>& doableActions);
+	static bool IsIn(const std::pair<const std::string, bool>& data, const std::unordered_map<std::string, bool>& map);
 };

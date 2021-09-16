@@ -3,8 +3,7 @@
 
 GoapAction::GoapAction(float cost) : cost(cost)
 {
-	GeneratePreConditions();
-	GenerateEffects();
+
 }
 
 void GoapAction::AddPreCondition(std::string key, bool value)
