@@ -43,52 +43,52 @@ std::deque<const GoapAction*> GoapPlanner::run(const std::unordered_map<std::str
 			}
 		}
 		
-		for (const GoapAction* action : currentNode->remainingActions)
+		if (currentNode->remainingPreconditions.empty())
 		{
-			GoapNode* childNode = &currentNode->children.emplace_back();
-			childNode->parent = currentNode;
+			// Check if leaf is valid
 			
-			childNode->remainingPreconditions = currentNode->remainingPreconditions;
-			childNode->remainingActions = currentNode->remainingActions;
+			float cost;
 			
-			childNode->remainingActions.erase(
-				std::find(childNode->remainingActions.begin(), childNode->remainingActions.end(), action)
-			);
-			childNode->currentAction = action;
-			
-			// Apply effects to preconditions
-			for (const auto& effect : action->getEffects())
+			if (isValid(currentNode, agentState, cost) && (bestNode == nullptr || cost < bestCost))
 			{
-				auto matchingPreconditionIt = childNode->remainingPreconditions.find(effect.first);
-				if (matchingPreconditionIt != childNode->remainingPreconditions.end() && matchingPreconditionIt->second == effect.second)
-				{
-					childNode->remainingPreconditions.erase(matchingPreconditionIt);
-				}
+				bestNode = currentNode;
+				bestCost = cost;
 			}
-			
-			// Add new preconditions from added action
-			for (const auto& addedPrecondition : action->getPreconditions())
+		}
+		else
+		{
+			for (const GoapAction* action : currentNode->remainingActions)
 			{
-				childNode->remainingPreconditions.insert(addedPrecondition);
-			}
-			
-			removeAlreadySatisfiedPreconditions(childNode, agentState);
-			
-			
-			if (childNode->remainingPreconditions.empty())
-			{
-				// Check if leaf is valid
+				GoapNode* childNode = &currentNode->children.emplace_back();
+				childNode->parent = currentNode;
 				
-				float cost;
+				childNode->remainingPreconditions = currentNode->remainingPreconditions;
+				childNode->remainingActions = currentNode->remainingActions;
 				
-				if (isValid(childNode, agentState, cost) && (bestNode == nullptr || cost < bestCost))
+				childNode->remainingActions.erase(
+					std::find(childNode->remainingActions.begin(), childNode->remainingActions.end(), action)
+				);
+				childNode->currentAction = action;
+				
+				// Apply effects to preconditions
+				for (const auto& effect : action->getEffects())
 				{
-					bestNode = childNode;
-					bestCost = cost;
+					auto matchingPreconditionIt = childNode->remainingPreconditions.find(effect.first);
+					if (matchingPreconditionIt != childNode->remainingPreconditions.end() && matchingPreconditionIt->second == effect.second)
+					{
+						childNode->remainingPreconditions.erase(matchingPreconditionIt);
+					}
 				}
-			}
-			else
-			{
+				
+				// Add new preconditions from added action
+				for (const auto& addedPrecondition : action->getPreconditions())
+				{
+					childNode->remainingPreconditions.insert(addedPrecondition);
+				}
+				
+				removeAlreadySatisfiedPreconditions(childNode, agentState);
+				
+				
 				openNodes.push_back(childNode);
 			}
 		}
