@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
+#include <format>
 
 std::deque<GoapAction*> GoapPlanner::run(const std::unordered_map<std::string, bool>& agentState, GoapAction& goal, const std::vector<GoapAction*>& actions, GoapAction& defaultAction)
 {
@@ -105,6 +106,9 @@ std::deque<GoapAction*> GoapPlanner::run(const std::unordered_map<std::string, b
 			res.push_back(node->currentAction);
 			node = node->parent;
 		}
+
+		std::cout << " Finished Planning, the plan is : " << std::endl;
+		std::cout << prettyPrint(*bestNode);
 		
 		return std::move(res);
 	}
@@ -164,4 +168,19 @@ bool GoapPlanner::isValid(GoapNode* node, std::unordered_map<std::string, bool> 
 	}
 	
 	return valid;
+}
+
+std::string GoapPlanner::prettyPrint(GoapNode& node)
+{
+	std::string s = "";
+	GoapNode* n = &node;
+	while (n != nullptr) {
+		if (n->currentAction != nullptr) {
+			s += std::format("{} ({}) -> ", n->currentAction->getName(), n->currentAction->getCost());
+		}
+
+		n = n->parent;
+	}
+	s += "GOAL";
+	return s;
 }

@@ -39,8 +39,13 @@ void GoapAgent::makePlan()
 	for (auto& action : actions) {
 		action->reset();
 	}
+
+	std::cout << "Current state is " << prettyPrint(_state) << std::endl;
 	
 	_plan = GoapPlanner::run(_state, *_goal, actions, *_defaultAction);
+
+
+
 	std::cout << "---------------------------------------------------" << std::endl << std::endl;
 }
 
@@ -78,10 +83,11 @@ std::string GoapAgent::prettyPrint(std::unordered_map<std::string, bool> state)
 {
 	std::string s = "[ ";
 	for (const auto& pair : state) {
-		s += pair.first + " = " + (pair.second ? "T" : "F");
-		s += ",";
+		s += pair.first + " = " + (pair.second ? "true" : "false");
+		s += ", ";
 	}
 	s += " ]";
+	s += '\n';
 	return s;
 }
 

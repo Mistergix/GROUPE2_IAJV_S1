@@ -15,4 +15,5 @@ public:
 private:
 	static void removeAlreadySatisfiedPreconditions(GoapNode* node, const std::unordered_map<std::string, bool>& agentState);
 	static bool isValid(GoapNode* node, std::unordered_map<std::string, bool> agentState, float& cost);
+	static std::string prettyPrint(GoapNode& node);
 };

@@ -11,9 +11,9 @@ Action_AttackPlayer::Action_AttackPlayer():
 
 bool Action_AttackPlayer::tryPerformAction(WorldV2& world, GoapAgent& ai)
 {
-	std::cout << "ATTACK PLAYER, his life is " + world.playerLife << std::endl;
+	std::cout << "ATTACK PLAYER, his life is " << world.playerLife << std::endl;
 	world.PlayerTakeDamage();
-	std::cout << "His life now is " + world.playerLife << std::endl;
+	std::cout << "His life now is " << world.playerLife << std::endl;
 	return true;
 }
 
