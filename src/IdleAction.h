@@ -4,14 +4,9 @@
 
 class IdleAction : public GoapAction {
 public:
-	IdleAction(float cost);
-	virtual void GeneratePreConditions();
-	virtual void GenerateEffects();
-	virtual bool TryPerformAction(World world);
-	virtual bool Finished();
-	virtual bool CanDoActionInContext(GoapAI& ai) const;
-	virtual void Reset();
-	float reloadTime;
-private:
-	float currentReloadTime;
+	IdleAction(float cost, std::string name);
+	virtual bool TryPerformAction(World& world, GoapAI& ai) override;
+	virtual bool Finished() const override;
+	virtual bool CanDoActionInContext(World& world, GoapAI& ai) const override;
+	virtual void Reset() override;
 };

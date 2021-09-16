@@ -8,24 +8,26 @@
 
 class GoapAI {
 public:
-	GoapAI();
-	virtual void LoadActions() = 0; // protected in c++ ?
+	GoapAI(std::string name);
 	void AddAction(GoapAction& action);
 	void AddState(std::string key, bool value);
-	void PlanSequenceOfAction(std::unordered_map<std::string, bool>& goalState);
+	void PlanSequenceOfAction(std::unordered_map<std::string, bool>& goalState, World& world);
 	bool HasPlan();
 	void PerformAction(World& world);
 	GoapAction* GetDefaultAction();
 	void SetDefaultAction(GoapAction* defaultAction);
 	Node* BestNode(std::vector<Node> leaves);
+	std::string PrettyPrint(Node& node);
+	std::string PrettyPrint(std::unordered_map<std::string, bool> state);
 private :
 	std::vector<GoapAction> _possibleActions;
 	std::queue<GoapAction*> _currentActions;
 	std::unordered_map<std::string, bool> _currentState;;
 	bool _hasPlan;
 	GoapAction* defaultAction;
+	std::string name;
 
-	void PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState);
+	void PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState, World& world);
 	static bool StateContainsTest(std::unordered_map<std::string, bool>& test, std::unordered_map<std::string, bool>& state);
 	void UpdateEffects(GoapAction& action);
 	static std::unordered_map<std::string, bool> UpdateState(std::unordered_map<std::string, bool> state, std::unordered_map<std::string, bool>& effects);

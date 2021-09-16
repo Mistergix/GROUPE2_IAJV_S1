@@ -6,8 +6,8 @@ class GoapAI;
 
 class GoapAction {
 public:
-	explicit GoapAction(float cost);
-	virtual bool TryPerformAction(World& world) = 0;
+	explicit GoapAction(float cost, std::string name);
+	virtual bool TryPerformAction(World& world, GoapAI& ai) = 0;
 	virtual bool Finished() const = 0;
 	virtual bool CanDoActionInContext(World& world, GoapAI& ai) const = 0;
 	virtual void Reset() = 0;
@@ -16,4 +16,7 @@ public:
 	std::unordered_map<std::string, bool> preConditions;
 	std::unordered_map<std::string, bool> effects;
 	float cost;
+	std::string Name();
+private :
+	std::string name;
 };

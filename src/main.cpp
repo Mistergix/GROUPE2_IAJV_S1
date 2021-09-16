@@ -12,30 +12,22 @@ int main()
 {
 	World world(3);
 
-	EnemyAI enemyAI1;
-
-	enemyAI1.AddState("HasAmmo", true);
-	enemyAI1.AddState("HasWeapon", true);
-	enemyAI1.AddState("PlayerInRange", true);
-
-
-	EnemyAI enemyAI;
+	EnemyAI enemyAI("Enemy 1");
 	
-
 	enemyAI.AddState("HasAmmo", false);
 	enemyAI.AddState("HasWeapon", true);
 	enemyAI.AddState("PlayerInRange", false);
 
-	IdleAction idle(1.0f);
+	IdleAction idle(1.0f, "IDLE");
 
-	AttackPlayerAction attackPlayer(1.0f);
+	AttackPlayerAction attackPlayer(1.0f, "ATTACK");
 
-	GetWeaponAction getWeapon(3.0f);
+	GetWeaponAction getWeapon(3.0f, "GET WEAPON");
 
-	ReloadAction reload(1.0f);
+	ReloadAction reload(1.0f, "RELOAD");
 	reload.reloadTime = 1.0f;
 
-	MoveToPlayerAction moveToPlayer(3.0f);
+	MoveToPlayerAction moveToPlayer(3.0f, "MOVE");
 
 	enemyAI.AddAction(attackPlayer);
 	enemyAI.AddAction(getWeapon);
@@ -48,6 +40,10 @@ int main()
 
 	goalState["DecreasePlayerLife"] = true;
 
+
+
+	// TODO
+	// Update World, and enemies states
 	while (world.playerLife > 0) {
 		while (!enemyAI.HasPlan()) {
 			enemyAI.PlanSequenceOfAction(goalState);

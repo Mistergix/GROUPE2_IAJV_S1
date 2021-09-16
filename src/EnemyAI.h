@@ -3,5 +3,6 @@
 #include "GoapAI.h"
 
 class EnemyAI : public GoapAI {
-	void LoadActions() override;
+public:
+	EnemyAI(std::string name);
 };

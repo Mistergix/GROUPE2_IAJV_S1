@@ -1,6 +1,7 @@
 #include "ReloadAction.h"
+#include <iostream>
 
-ReloadAction::ReloadAction(float cost, float reloadTime) : GoapAction(cost), reloadTime(reloadTime)
+ReloadAction::ReloadAction(float cost, std::string name) : GoapAction(cost, name)
 {
 	AddPreCondition("HasWeapon", true);
 
@@ -9,18 +10,19 @@ ReloadAction::ReloadAction(float cost, float reloadTime) : GoapAction(cost), rel
 	Reset();
 }
 
-bool ReloadAction::TryPerformAction(World world)
+bool ReloadAction::TryPerformAction(World& world, GoapAI& ai)
 {
 	currentReloadTime += 1.0f / 60.0f;
+	std::cout << "Going To Weapon, completion " << currentReloadTime / reloadTime * 100.0f << std::endl;
 	return true;
 }
 
-bool ReloadAction::Finished()
+bool ReloadAction::Finished() const
 {
 	return currentReloadTime >= reloadTime;
 }
 
-bool ReloadAction::CanDoActionInContext(GoapAI& ai, World& world) const
+bool ReloadAction::CanDoActionInContext(World& world, GoapAI& ai) const
 {
 	return true;
 }

@@ -122,14 +122,13 @@ bool GoapAI::BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, 
 	return foundOneSolution;
 }
 
-GoapAI::GoapAI()
+GoapAI::GoapAI(std::string name) : name(name)
 {
-	LoadActions();
 }
 
 void GoapAI::AddAction(GoapAction& action)
 {
-	 
+	_possibleActions.push_back(action);
 }
 
 void GoapAI::AddState(std::string key, bool value)
@@ -137,9 +136,12 @@ void GoapAI::AddState(std::string key, bool value)
 	_currentState[key] = value;
 }
 
-void GoapAI::PlanSequenceOfAction(std::unordered_map<std::string, bool>& goalState)
+void GoapAI::PlanSequenceOfAction(std::unordered_map<std::string, bool>& goalState, World& world)
 {
-	PlanSequenceOfActions(_currentState, goalState);
+	std::cout << name << " IS PLANNING ..." << std::endl;
+	PlanSequenceOfActions(_currentState, goalState, world);
+	
+	std::cout << "---------------------------------------------------" << std::endl << std::endl;
 }
 
 bool GoapAI::HasPlan()
@@ -149,25 +151,31 @@ bool GoapAI::HasPlan()
 
 void GoapAI::PerformAction(World& world)
 {
+	std::cout << name << " IS Performing Action ..." << std::endl;
 	if (_currentActions.empty()) {
+		std::cout << "No more actions ..." << std::endl;
 		_hasPlan = false;
 		return;
 	}
 
 	GoapAction& action = *(_currentActions.front());
 	if (action.Finished()) {
+		std::cout << action.Name() + " is finished !" << std::endl;
 		UpdateEffects(action);
 		_currentActions.pop();
 	}
 
 	if (_currentActions.empty()) {
+		std::cout << "No more actions ..." << std::endl;
 		_hasPlan = false;
 		return;
 	}
 
 	action = *(_currentActions.front());
-	bool success = action.TryPerformAction(world);
+	std::cout << "Current Action is " + action.Name() << std::endl;
+	bool success = action.TryPerformAction(world, *this);
 	if (!success) {
+		std::cout << "Failed to perform action, need a new plan" << std::endl;
 		_hasPlan = false;
 		return;
 	}
@@ -194,7 +202,36 @@ Node* GoapAI::BestNode(std::vector<Node> leaves)
 	return &bestNode;
 }
 
-void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState)
+std::string GoapAI::PrettyPrint(Node& node)
+{
+	std::string s = "";
+	Node* n = &node;
+	while (n != nullptr) {
+		if (n->action != nullptr) {
+			s += n->action->Name();
+			s += " (";
+			s += n->action->cost;
+			s += ") -> ";
+		}
+
+		n = n->parent;
+	}
+	s += "GOAL";
+	return s;
+}
+
+std::string GoapAI::PrettyPrint(std::unordered_map<std::string, bool> state)
+{
+	std::string s = "[ ";
+	for (const auto& pair : state) {
+		s += pair.first + " = " + (pair.second ? "T" : "F");
+		s += ",";
+	}
+	s += " ]";
+	return s;
+}
+
+void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState, World& world)
 {
 	for (auto& action : _possibleActions) {
 		action.Reset();
@@ -203,7 +240,7 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	std::vector<GoapAction*> doableActions;
 
 	for (auto& action : _possibleActions) {
-		if (action.CanDoActionInContext(*this)) {
+		if (action.CanDoActionInContext(world, *this)) {
 			doableActions.push_back(&action);
 		}
 	}
@@ -227,11 +264,17 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	bool success = BuildTree(openNodes, leaves, doableActions);
 
 	if (!success) {
+		std::cout << "NO PATH FOUND, DEFAULT PATH";
 		leaves.clear();
 		GoapAction* action = GetDefaultAction();
 		std::unordered_map<std::string, bool> unfilledConditions;
 		Node node(nullptr, action->cost, initialState, unfilledConditions, doableActions, action);
 		leaves.push_back(node);
+	}
+
+	std::cout << " All the paths are " << std::endl;
+	for (auto& leaf : leaves) {
+		PrettyPrint(leaf);
 	}
 
 	Node* bestNode = BestNode(leaves);
@@ -248,7 +291,8 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 		n = n->parent;
 	}
 
-	std::cout << "We have a plan !!" << std::endl;
+	std::cout << " Finished Planning, the plan is : " << std::endl;
+	std::cout << PrettyPrint(*bestNode);
 	_hasPlan = true;
 }
 
@@ -270,6 +314,8 @@ bool GoapAI::StateContainsTest(std::unordered_map<std::string, bool>& test, std:
 
 void GoapAI::UpdateEffects(GoapAction& action)
 {
+	std::cout << "OLD State is " << PrettyPrint(_currentState);
 	_currentState = UpdateState(_currentState, action.effects);
+	std::cout << "NEW State is " << PrettyPrint(_currentState);
 }
 
