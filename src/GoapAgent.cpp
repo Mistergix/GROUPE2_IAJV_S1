@@ -7,18 +7,19 @@
 #include "Action/Action_PickupWeapon.h"
 #include "Action/Action_Reload.h"
 
-GoapAgent::GoapAgent():
-_state({
-	{"has_weapon", false},
-	{"has_ammo", false},
-	{"is_in_range", false}
-})
+GoapAgent::GoapAgent(std::string name):
+_name(name)
 {
 	_goal = std::make_unique<Action_AttackPlayer>();
 	
 	_actions.push_back(std::make_unique<Action_MoveToPlayer>());
 	_actions.push_back(std::make_unique<Action_PickupWeapon>());
 	_actions.push_back(std::make_unique<Action_Reload>());
+}
+
+void GoapAgent::addState(std::string key, bool value)
+{
+	_state[key] = value;
 }
 
 void GoapAgent::makePlan()

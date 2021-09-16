@@ -8,8 +8,8 @@
 class GoapAgent
 {
 public:
-	GoapAgent();
-	
+	GoapAgent(std::string name);
+	void addState(std::string key, bool value);
 	void makePlan();
 	
 private:
@@ -19,4 +19,6 @@ private:
 	std::unordered_map<std::string, bool> _state;
 	
 	std::deque<const GoapAction*> _plan;
+
+	std::string _name;
 };

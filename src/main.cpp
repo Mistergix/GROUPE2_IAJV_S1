@@ -12,7 +12,12 @@
 
 int main()
 {
-	GoapAgent agent;
+	GoapAgent agent("Enemy 1");
+
+	agent.addState("has_ammo", false);
+	agent.addState("has_weapon", true);
+	agent.addState("is_in_range", false);
+
 	agent.makePlan();
 
 	World world(3);
