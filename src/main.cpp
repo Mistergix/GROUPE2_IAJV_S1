@@ -40,13 +40,11 @@ int main()
 
 	goalState["DecreasePlayerLife"] = true;
 
-
-
 	// TODO
 	// Update World, and enemies states
 	while (world.playerLife > 0) {
 		while (!enemyAI.HasPlan()) {
-			enemyAI.PlanSequenceOfAction(goalState);
+			enemyAI.PlanSequenceOfAction(goalState, world);
 		}
 
 		while (enemyAI.HasPlan()) {
