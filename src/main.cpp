@@ -1,23 +1,16 @@
 #include <iostream>
 
-#include "Goap V1/EnemyAI.h"
-#include "Goap V1/World.h"
-#include "Goap V1/AttackPlayerAction.h"
-#include "Goap V1/GetWeaponAction.h"
-#include "Goap V1/MoveToPlayerAction.h"
-#include "Goap V1/ReloadAction.h"
-#include "Goap V1/IdleAction.h"
-
 #include "GoapAgent.h"
 #include "Action/Action_AttackPlayer.h"
 #include "Action/Action_MoveToPlayer.h"
 #include "Action/Action_PickupWeapon.h"
 #include "Action/Action_Reload.h"
 #include "Action/Action_Idle.h"
+#include "WorldV2.h"
 
 int main()
 {
-	World world(3);
+	WorldV2 world(3, 1);
 
 	GoapAgent agent("Enemy 1", std::make_unique<Action_AttackPlayer>(), std::make_unique<Action_Idle>());
 

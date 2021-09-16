@@ -2,6 +2,9 @@
 
 #include <unordered_map>
 
+#include "../WorldV2.h"
+class GoapAgent;
+
 class GoapAction {
 public:
 	explicit GoapAction(float cost, std::string name);
@@ -13,9 +16,9 @@ public:
 	
 	const std::string& getName() const;
 
-	virtual bool tryPerformAction(World& world, GoapAgent& ai) const = 0;
+	virtual bool tryPerformAction(WorldV2& world, GoapAgent& ai) = 0;
 	virtual bool finished() const = 0;
-	virtual bool canDoActionInContext(World& world, GoapAgent& ai) const = 0;
+	virtual bool canDoActionInContext(WorldV2& world, GoapAgent& ai) const = 0;
 	virtual void reset() = 0;
 
 protected:

@@ -9,8 +9,8 @@
 struct GoapNode
 {
 	std::unordered_map<std::string, bool> remainingPreconditions;
-	std::list<const GoapAction*> remainingActions;
-	const GoapAction* currentAction = nullptr;
+	std::list<GoapAction*> remainingActions;
+	GoapAction* currentAction = nullptr;
 	
 	GoapNode* parent = nullptr;
 	std::list<GoapNode> children;

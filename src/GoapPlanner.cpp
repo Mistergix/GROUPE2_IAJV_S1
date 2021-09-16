@@ -4,13 +4,13 @@
 #include <iterator>
 #include <iostream>
 
-std::deque<const GoapAction*> GoapPlanner::run(const std::unordered_map<std::string, bool>& agentState, const GoapAction& goal, const std::vector<const GoapAction*>& actions, const GoapAction& defaultAction)
+std::deque<GoapAction*> GoapPlanner::run(const std::unordered_map<std::string, bool>& agentState, GoapAction& goal, const std::vector<GoapAction*>& actions, GoapAction& defaultAction)
 {
 	GoapNode rootNode;
 	rootNode.remainingPreconditions = goal.getPreconditions();
 	rootNode.currentAction = &goal;
 	
-	std::transform(actions.begin(), actions.end(), std::back_inserter(rootNode.remainingActions), [](const GoapAction* action){
+	std::transform(actions.begin(), actions.end(), std::back_inserter(rootNode.remainingActions), [](GoapAction* action){
 		return action;
 	});
 	
@@ -44,7 +44,7 @@ std::deque<const GoapAction*> GoapPlanner::run(const std::unordered_map<std::str
 			}
 		}
 		
-		for (const GoapAction* action : currentNode->remainingActions)
+		for (GoapAction* action : currentNode->remainingActions)
 		{
 			GoapNode* childNode = &currentNode->children.emplace_back();
 			childNode->parent = currentNode;
@@ -98,7 +98,7 @@ std::deque<const GoapAction*> GoapPlanner::run(const std::unordered_map<std::str
 	if (bestNode != nullptr)
 	{
 		GoapNode* node = bestNode;
-		std::deque<const GoapAction*> res;
+		std::deque<GoapAction*> res;
 		
 		while (node != nullptr)
 		{
