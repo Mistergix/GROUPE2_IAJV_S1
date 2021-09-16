@@ -1,7 +1,7 @@
 #include "MoveToPlayerAction.h"
 #include <iostream>
 
-MoveToPlayerAction::MoveToPlayerAction(float cost, std::string name) : GoapAction(cost, name)
+MoveToPlayerAction::MoveToPlayerAction(float cost, std::string name) : GoapActionV1(cost, name)
 {
 	AddEffect("PlayerInRange", true);
 	timeToMove = 2.5f;

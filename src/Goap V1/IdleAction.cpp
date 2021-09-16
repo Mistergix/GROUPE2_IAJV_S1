@@ -1,7 +1,7 @@
 #include "IdleAction.h"
 #include <iostream>
 
-IdleAction::IdleAction(float cost, std::string name) : GoapAction(cost, name)
+IdleAction::IdleAction(float cost, std::string name) : GoapActionV1(cost, name)
 {
 }
 

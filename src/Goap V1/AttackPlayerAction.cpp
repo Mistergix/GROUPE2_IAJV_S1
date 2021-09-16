@@ -1,7 +1,7 @@
 #include "AttackPlayerAction.h"
 #include <iostream>
 
-AttackPlayerAction::AttackPlayerAction(float cost, std::string name) : GoapAction(cost, name)
+AttackPlayerAction::AttackPlayerAction(float cost, std::string name) : GoapActionV1(cost, name)
 {
 	AddPreCondition("HasAmmo", true);
 	AddPreCondition("HasWeapon", true);

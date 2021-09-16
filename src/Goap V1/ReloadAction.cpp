@@ -1,7 +1,7 @@
 #include "ReloadAction.h"
 #include <iostream>
 
-ReloadAction::ReloadAction(float cost, std::string name) : GoapAction(cost, name)
+ReloadAction::ReloadAction(float cost, std::string name) : GoapActionV1(cost, name)
 {
 	AddPreCondition("HasWeapon", true);
 

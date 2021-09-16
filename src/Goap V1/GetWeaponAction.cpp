@@ -1,7 +1,7 @@
 #include "GetWeaponAction.h"
 #include <iostream>
 
-GetWeaponAction::GetWeaponAction(float cost, std::string name) : GoapAction(cost, name)
+GetWeaponAction::GetWeaponAction(float cost, std::string name) : GoapActionV1(cost, name)
 {
 	AddEffect("HasAmmo", true);
 	AddEffect("HasWeapon", true);

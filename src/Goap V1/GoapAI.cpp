@@ -61,7 +61,7 @@ std::unordered_map<std::string, bool> GoapAI::UpdateState(std::unordered_map<std
 	return state;
 }
 
-std::list<GoapAction*> GoapAI::GetSubset(std::list<GoapAction*> actions, GoapAction* removeThisAction)
+std::list<GoapActionV1*> GoapAI::GetSubset(std::list<GoapActionV1*> actions, GoapActionV1* removeThisAction)
 {
 	auto it = std::find(actions.begin(), actions.end(), removeThisAction);
 	if (it != actions.end())
@@ -72,7 +72,7 @@ std::list<GoapAction*> GoapAI::GetSubset(std::list<GoapAction*> actions, GoapAct
 	return actions;
 }
 
-bool GoapAI::BuildTree(std::list<Node>& openNodes, std::list<Node>& leaves, std::list<GoapAction*>& doableActions) {
+bool GoapAI::BuildTree(std::list<Node>& openNodes, std::list<Node>& leaves, std::list<GoapActionV1*>& doableActions) {
 	
 	bool foundOneSolution = false;
 
@@ -92,7 +92,7 @@ bool GoapAI::BuildTree(std::list<Node>& openNodes, std::list<Node>& leaves, std:
 		{
 			std::list<Node> newNodes;
 			std::unordered_map<std::string, bool> currentState = UpdateState(node.state, node.action->effects);
-			std::list<GoapAction*> subset = GetSubset(doableActions, node.action);
+			std::list<GoapActionV1*> subset = GetSubset(doableActions, node.action);
 
 			for (const auto& action : subset) {
 				float cost = action->cost + node.cost;
@@ -123,7 +123,7 @@ GoapAI::GoapAI(std::string name) : name(name)
 	_hasPlan = false;
 }
 
-void GoapAI::AddAction(GoapAction& action)
+void GoapAI::AddAction(GoapActionV1& action)
 {
 	_possibleActions.push_back(&action);
 }
@@ -155,7 +155,7 @@ void GoapAI::PerformAction(World& world)
 		return;
 	}
 
-	GoapAction& action = *(_currentActions.front());
+	GoapActionV1& action = *(_currentActions.front());
 	if (action.Finished()) {
 		std::cout << action.Name() + " is finished !" << std::endl;
 		UpdateEffects(action);
@@ -178,11 +178,11 @@ void GoapAI::PerformAction(World& world)
 	}
 }
 
-GoapAction* GoapAI::GetDefaultAction() {
+GoapActionV1* GoapAI::GetDefaultAction() {
 	return defaultAction;
 }
 
-void GoapAI::SetDefaultAction(GoapAction* defaultAction)
+void GoapAI::SetDefaultAction(GoapActionV1* defaultAction)
 {
 	this->defaultAction = defaultAction;
 }
@@ -234,7 +234,7 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 		action->Reset();
 	}
 
-	std::list<GoapAction*> doableActions;
+	std::list<GoapActionV1*> doableActions;
 
 	for (auto& action : _possibleActions) {
 		if (action->CanDoActionInContext(world, *this)) {
@@ -263,7 +263,7 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	if (!success) {
 		std::cout << "NO PATH FOUND, DEFAULT PATH";
 		leaves.clear();
-		GoapAction* action = GetDefaultAction();
+		GoapActionV1* action = GetDefaultAction();
 		std::unordered_map<std::string, bool> unfilledConditions;
 		Node node(nullptr, action->cost, initialState, unfilledConditions, doableActions, action);
 		leaves.push_back(node);
@@ -278,7 +278,7 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 
 	_currentActions = {}; // clear actions queue
 
-	std::vector<GoapAction> actions;
+	std::vector<GoapActionV1> actions;
 	Node* n = bestNode;
 	while (n != nullptr) {
 		if (n->action != nullptr) {
@@ -309,7 +309,7 @@ bool GoapAI::StateContainsTest(std::unordered_map<std::string, bool>& test, std:
 	return true;
 }
 
-void GoapAI::UpdateEffects(GoapAction& action)
+void GoapAI::UpdateEffects(GoapActionV1& action)
 {
 	std::cout << "OLD State is " << PrettyPrint(_currentState);
 	_currentState = UpdateState(_currentState, action.effects);

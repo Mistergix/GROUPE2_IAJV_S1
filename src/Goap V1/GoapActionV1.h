@@ -4,9 +4,9 @@
 #include "World.h"
 class GoapAI;
 
-class GoapAction {
+class GoapActionV1 {
 public:
-	explicit GoapAction(float cost, std::string name);
+	explicit GoapActionV1(float cost, std::string name);
 	virtual bool TryPerformAction(World& world, GoapAI& ai) = 0;
 	virtual bool Finished() const = 0;
 	virtual bool CanDoActionInContext(World& world, GoapAI& ai) const = 0;

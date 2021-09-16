@@ -1,8 +1,8 @@
 #pragma once
 
-#include "GoapAction.h"
+#include "GoapActionV1.h"
 
-class GetWeaponAction : public GoapAction{
+class GetWeaponAction : public GoapActionV1 {
 public:
 	GetWeaponAction(float cost, std::string name);
 	virtual bool TryPerformAction(World& world, GoapAI& ai) override;
