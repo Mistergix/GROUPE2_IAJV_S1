@@ -3,6 +3,7 @@
 #include <utility>
 
 #include "GoapAction.h"
+
 class Node {
 public :
 	Node* parent;

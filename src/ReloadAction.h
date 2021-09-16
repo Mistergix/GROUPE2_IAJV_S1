@@ -4,12 +4,10 @@
 
 class ReloadAction : public GoapAction {
 public:
-	ReloadAction(float cost);
-	virtual void GeneratePreConditions();
-	virtual void GenerateEffects();
+	ReloadAction(float cost, float reloadTime);
 	virtual bool TryPerformAction(World world);
 	virtual bool Finished();
-	virtual bool CanDoActionInContext(GoapAI& ai) const;
+	virtual bool CanDoActionInContext(GoapAI& ai, World& world) const;
 	virtual void Reset();
 	float reloadTime;
 private :

@@ -9,7 +9,7 @@ public:
 	explicit GoapAction(float cost);
 	virtual bool TryPerformAction(World& world) = 0;
 	virtual bool Finished() const = 0;
-	virtual bool CanDoActionInContext(GoapAI& ai) const = 0;
+	virtual bool CanDoActionInContext(World& world, GoapAI& ai) const = 0;
 	virtual void Reset() = 0;
 	void AddPreCondition(std::string key, bool value);
 	void AddEffect(std::string key, bool value);

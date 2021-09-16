@@ -31,6 +31,8 @@ private :
 	static std::unordered_map<std::string, bool> UpdateState(std::unordered_map<std::string, bool> state, std::unordered_map<std::string, bool>& effects);
 	bool IsValid(const Node& node) const;
 	static std::vector<GoapAction*> GetSubset(std::vector<GoapAction*> actions, GoapAction* removeThisAction);
-	bool BuildTree(std::vector<Node>& openNodes, std::vector<Node*>& leaves, std::vector<GoapAction*>& doableActions);
+	bool BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, std::vector<GoapAction*>& doableActions);
 	static bool IsIn(const std::pair<const std::string, bool>& data, const std::unordered_map<std::string, bool>& map);
+	void CreateUnFilledConditions(std::unordered_map<std::string, bool>& initialState, Node& node, std::unordered_map<std::string, bool>& unfilledConditions);
+	void CreateInitialUnFilledConditions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState, std::unordered_map<std::string, bool>& unfilledConditions);
 };

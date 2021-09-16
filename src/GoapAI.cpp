@@ -12,14 +12,23 @@ bool GoapAI::IsIn(const std::pair<const std::string, bool>& data, const std::uno
 	return false;
 }
 
-void CreateUnFilledConditions(std::unordered_map<std::string, bool>& initialState, Node& node, std::unordered_map<std::string, bool>& unfilledConditions) {
+void GoapAI::CreateUnFilledConditions(std::unordered_map<std::string, bool>& initialState, Node& node, std::unordered_map<std::string, bool>& unfilledConditions) {
 
 	for (const auto& keyValue : node.unfilledConditions) {
-		if (!IsIn(keyValue, node.action.effects)) {
+		if (!IsIn(keyValue, node.action->effects)) {
 			unfilledConditions[keyValue.first] = keyValue.second;
 		}
 	}
 	for (const auto& keyValue : node.action->preConditions) {
+		if (!IsIn(keyValue, initialState)) {
+			unfilledConditions[keyValue.first] = keyValue.second;
+		}
+	}
+}
+
+void GoapAI::CreateInitialUnFilledConditions(std::unordered_map<std::string, bool>& initialState, std::unordered_map<std::string, bool>& goalState, std::unordered_map<std::string, bool>& unfilledConditions)
+{
+	for (const auto& keyValue : goalState) {
 		if (!IsIn(keyValue, initialState)) {
 			unfilledConditions[keyValue.first] = keyValue.second;
 		}
@@ -98,7 +107,7 @@ bool GoapAI::BuildTree(std::vector<Node>& openNodes, std::vector<Node>& leaves, 
 
 				std::unordered_map<std::string, bool> unfilledConditions;
 				CreateUnFilledConditions(currentState, node, unfilledConditions);
-				Node n(node, cost, currentState, unfilledConditions, subset, action);
+				Node n(&node, cost, currentState, unfilledConditions, subset, action);
 				newNodes.push_back(node);
 			}
 
@@ -145,7 +154,7 @@ void GoapAI::PerformAction(World& world)
 		return;
 	}
 
-	GoapAction& action = _currentActions.front();
+	GoapAction& action = *(_currentActions.front());
 	if (action.Finished()) {
 		UpdateEffects(action);
 		_currentActions.pop();
@@ -156,7 +165,7 @@ void GoapAI::PerformAction(World& world)
 		return;
 	}
 
-	action = _currentActions.front();
+	action = *(_currentActions.front());
 	bool success = action.TryPerformAction(world);
 	if (!success) {
 		_hasPlan = false;
@@ -177,7 +186,7 @@ Node* GoapAI::BestNode(std::vector<Node> leaves)
 {
 	Node bestNode;
 	for (const auto& node : leaves) {
-		if (bestNode == nullptr || node.cost < bestNode.cost) {
+		if (&bestNode == nullptr || node.cost < bestNode.cost) {
 			bestNode = node;
 		}
 	}
@@ -206,7 +215,7 @@ void GoapAI::PlanSequenceOfActions(std::unordered_map<std::string, bool>& initia
 	for (const auto& action : doableActions) {
 		std::unordered_map<std::string, bool> unfilledConditions;
 		std::unordered_map<std::string, bool> temp;
-		CreateUnFilledConditions(initialState, goalState, temp, unfilledConditions);
+		CreateInitialUnFilledConditions(initialState, goalState, unfilledConditions);
 		for (const auto& effect : action->effects) {
 			if (IsIn(effect, unfilledConditions)) {
 				Node node(nullptr, action->cost, initialState, unfilledConditions, doableActions, action);
