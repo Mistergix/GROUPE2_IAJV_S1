@@ -78,38 +78,13 @@ std::deque<const GoapAction*> GoapPlanner::run(const std::unordered_map<std::str
 			if (childNode->remainingPreconditions.empty())
 			{
 				// Check if leaf is valid
-				bool valid = true;
-				float totalCost = 0;
 				
-				std::unordered_map<std::string, bool> simulatedAgentState = agentState;
+				float cost;
 				
-				GoapNode* node = childNode;
-				
-				while (node->parent != nullptr && valid)
-				{
-					totalCost += node->currentAction->getCost();
-					
-					for (const auto& effect : node->currentAction->getEffects())
-					{
-						simulatedAgentState[effect.first] = effect.second;
-					}
-					
-					for (const auto& precondition : node->parent->currentAction->getPreconditions())
-					{
-						if (simulatedAgentState[precondition.first] != precondition.second)
-						{
-							valid = false;
-							break;
-						}
-					}
-					
-					node = node->parent;
-				}
-				
-				if (valid && (bestNode == nullptr || totalCost < bestCost))
+				if (isValid(childNode, agentState, cost) && (bestNode == nullptr || cost < bestCost))
 				{
 					bestNode = childNode;
-					bestCost = totalCost;
+					bestCost = cost;
 				}
 			}
 			else
@@ -151,4 +126,38 @@ void GoapPlanner::removeAlreadySatisfiedPreconditions(GoapNode* node, const std:
 			it++;
 		}
 	}
+}
+
+bool GoapPlanner::isValid(GoapNode* node, std::unordered_map<std::string, bool> agentState, float& cost)
+{
+	bool valid = true;
+	float totalCost = 0;
+	
+	while (node->parent != nullptr && valid)
+	{
+		totalCost += node->currentAction->getCost();
+		
+		for (const auto& effect : node->currentAction->getEffects())
+		{
+			agentState[effect.first] = effect.second;
+		}
+		
+		for (const auto& precondition : node->parent->currentAction->getPreconditions())
+		{
+			if (agentState[precondition.first] != precondition.second)
+			{
+				valid = false;
+				break;
+			}
+		}
+		
+		node = node->parent;
+	}
+	
+	if (valid)
+	{
+		cost = totalCost;
+	}
+	
+	return valid;
 }

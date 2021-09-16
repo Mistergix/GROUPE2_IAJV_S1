@@ -9,9 +9,9 @@
 
 GoapAgent::GoapAgent():
 _state({
-	{"has_weapon", true},
+	{"has_weapon", false},
 	{"has_ammo", false},
-	{"is_in_range", true}
+	{"is_in_range", false}
 })
 {
 	_goal = std::make_unique<Action_AttackPlayer>();
