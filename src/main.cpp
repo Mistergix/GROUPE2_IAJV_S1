@@ -11,6 +11,7 @@
 #include "Action/Action_Idle.h"
 #include "Action/Action_PutOnBoots.h"
 #include "WorldV2.h"
+#include "UtilityAI/UtilityAI.h"
 
 int main()
 {
@@ -47,4 +48,8 @@ int main()
 	}
 
 	while(true){}
+
+	// Utility AI
+	//UtilityAI ai = UtilityAI();
+	//ai.ExecuteUtilityAI();
 }
